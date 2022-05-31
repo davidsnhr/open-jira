@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import Head from 'next/head'
 import React, { FC } from 'react'
 import { SideBar, Navbar } from '../ui'

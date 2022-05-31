@@ -2,21 +2,34 @@
 import { Add, SaveAltOutlined } from '@mui/icons-material'
 import { Button, TextField } from '@mui/material'
 import { Box } from '@mui/system'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useContext, useState } from 'react'
+import { EntriesContext } from '../../context/entries'
+import { UIContext } from '../../context/ui'
 
 export const NewEntry = () => {
 
-    const [isAdding, setIsAdding] = useState(false);
+
     const [touched, setTouched] = useState(false);
     const [inputValue, setInputValue] = useState('')
+
+    const {addEntry} = useContext(EntriesContext);
+    const  {setIsAddingEntry, isAddingEntry} = useContext(UIContext)
 
     const handleInputValue= (e:ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     }
+
+    const onSave = () => {
+        if(inputValue.length ===0) return;
+        addEntry(inputValue);
+        setIsAddingEntry(false);
+        setTouched(false);
+        setInputValue('');
+    }
     return (
         <Box sx={{marginBottom: 2, paddingX: 2}}>
             {
-                isAdding ? (
+                isAddingEntry ? (
                     <>
                         <TextField 
                             fullWidth
@@ -33,7 +46,7 @@ export const NewEntry = () => {
                         <Box display='flex' justifyContent='space-between'>
                             <Button
                                 variant='text'
-                                onClick={() => setIsAdding(false)}
+                                onClick={() => setIsAddingEntry(false)}
                             >
                                 Cancelar
                             </Button>
@@ -41,6 +54,7 @@ export const NewEntry = () => {
                                 variant='outlined'
                                 color='secondary'
                                 endIcon={<SaveAltOutlined/>}
+                                onClick={onSave}
                             >
                                 Guardar
                             </Button>
@@ -51,7 +65,7 @@ export const NewEntry = () => {
                         startIcon={<Add />}
                         fullWidth
                         variant='outlined'
-                        onClick={() => setIsAdding(true)}
+                        onClick={() => setIsAddingEntry(true)}
                     >
                         Agregar Tarea
                     </Button>
