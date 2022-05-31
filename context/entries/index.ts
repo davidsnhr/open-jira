@@ -1,3 +1,3 @@
-export * './EntriesContext';
-export * './EntriesProvider';
-export * './entriesReducer';
+export * from './EntriesContext';
+export * from './EntriesProvider';
+export * from './entriesReducer';
