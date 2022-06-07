@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { db } from '../../../database';
+
 import { Entry, IEntry } from '../../../models';
 
 type Data = 
@@ -11,6 +12,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     switch(req.method) {
         case 'GET':
             return getEntries(res);
+        case 'POST':
+            return createEntry(req, res);
         default:
             return res.status(400).json({message: 'Endpoint no existe'});
     }
@@ -22,4 +25,26 @@ const getEntries = async(res: NextApiResponse<Data>) => {
     await db.disconnect();
 
     res.status(200).json(entries)
+}
+
+
+const createEntry = async(req: NextApiRequest, res:NextApiResponse) => {
+    const {description} = req.body;
+    console.log(description)
+    const newEntry = new Entry({
+            description,
+            createAt: Date.now()
+    })
+    console.log("newEntry", newEntry)
+    try {
+        await db.connect();
+        await newEntry.save();
+        await db.disconnect();
+        res.status(201).json(newEntry)
+    } catch (error) {
+        
+        await db.disconnect();
+        res.status(500).json({message: 'error have happened'})
+    }
+
 }

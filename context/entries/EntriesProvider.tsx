@@ -21,19 +21,24 @@ interface Props {
 export const EntriesProvider:FC<Props> = ({children}) => {
     const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE)
 
-    const addEntry = (description: string) => {
-        const newEntry:Entry = {
-            _id: uuidv4(),
-            description,
-            createdAt: Date.now(),
-            status: 'pending'
+    const addEntry = async (description: string) => {
+        try {
+            const {data} = await entriesApi.post<Entry>('/entries', {description});
+            
+            dispatch({type:"[Entry] - AddEntry", payload: data})
+        } catch (error) {
+            
         }
-
-        dispatch({type:"[Entry] - AddEntry", payload: newEntry})
     }
 
-    const changeStatus = (entry: Entry) => {
-        dispatch({type:"[Entry] - changeStatusEntry", payload: entry})
+    const changeStatus = async({_id, description, status}: Entry) => {
+
+        try {
+            const {data} = await entriesApi.put<Entry>(`/entries/${_id}`, {description, status}) 
+            dispatch({type:"[Entry] - changeStatusEntry", payload: data})
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const refreshEntries = async() => {
